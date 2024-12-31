@@ -1,4 +1,10 @@
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  useWindowDimensions,
+} from "react-native";
 import Title from "../components/ui/Title";
 import { useState, useEffect } from "react";
 import NumberContainer from "../components/game/NumberContainer";
@@ -23,7 +29,7 @@ const GameScreen = ({ userNumber, onGameOver }) => {
   const initialGuess = generateRandomBetween(1, 100, userNumber);
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
   const [guessRounds, setGuessRounds] = useState([initialGuess]);
-
+  const { width, height } = useWindowDimensions();
   useEffect(() => {
     if (currentGuess === userNumber) {
       onGameOver();
@@ -57,9 +63,11 @@ const GameScreen = ({ userNumber, onGameOver }) => {
     maxBoundary = 100;
   }, []);
 
+  const marginTopDistance = height < 400 ? 20 : 70;
+
   return (
-    <View style={styles.screen}>
-      <View>
+    <View style={[styles.screen, { marginTop: marginTopDistance }]}>
+      <View style={styles.top}>
         <Title>Угадывание оппонента</Title>
         <NumberContainer>{currentGuess}</NumberContainer>
         <View>
@@ -90,7 +98,6 @@ export default GameScreen;
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    paddingTop: 70,
     paddingHorizontal: 24,
   },
   buttonsContainer: {
@@ -109,5 +116,8 @@ const styles = StyleSheet.create({
   logsContainer: {
     marginTop: 20,
     flex: 1,
+  },
+  top: {
+    alignItems: "center",
   },
 });
