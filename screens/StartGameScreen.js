@@ -1,7 +1,36 @@
-import { View, TextInput, StyleSheet } from "react-native";
-import PrimaryButton from "../components/PrimaryButton";
+import { View, TextInput, StyleSheet, Alert } from "react-native";
+import { useState } from "react";
+import PrimaryButton from "../components/ui/PrimaryButton";
+import Colors from "../constants/colors";
 
-function StartGameScreen() {
+function StartGameScreen({ onPickNumber }) {
+  const [enteredNumber, setEnteredNumber] = useState("");
+
+  const numberInputHandler = (enteredText) => {
+    setEnteredNumber(enteredText);
+  };
+
+  const resetInputHandler = () => {
+    setEnteredNumber("");
+  };
+
+  const confirmInputHandler = () => {
+    const chosenNumber = parseInt(enteredNumber);
+
+    if (isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99) {
+      Alert.alert("Непраивльное число", "Введите число от 1 до 99!", [
+        {
+          text: "Ok",
+          style: "destructive",
+          onPress: resetInputHandler,
+        },
+      ]);
+      return;
+    }
+
+    onPickNumber(chosenNumber);
+  };
+
   return (
     <View style={styles.inputContainer}>
       <TextInput
@@ -10,9 +39,13 @@ function StartGameScreen() {
         keyboardType="number-pad"
         autoCapitalize="none"
         autoCorrect={false}
+        value={enteredNumber}
+        onChangeText={numberInputHandler}
       />
-      <PrimaryButton>Сбросить</PrimaryButton>
-      <PrimaryButton>Согласиться</PrimaryButton>
+      <View style={styles.buttonsContainer}>
+        <PrimaryButton onPress={resetInputHandler}>Сбросить</PrimaryButton>
+        <PrimaryButton onPress={confirmInputHandler}>Согласиться</PrimaryButton>
+      </View>
     </View>
   );
 }
@@ -31,16 +64,25 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 }, //ios
     shadowRadius: 6, //ios
     shadowOpacity: 0.25, //ios
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 5,
   },
   textInput: {
     height: 50,
     width: 50,
-    fontSize: 28,
-    borderBottomColor: "#ddb52f",
+    fontSize: 18,
+    borderBottomColor: Colors.accent500,
     borderBottomWidth: 2,
-    color: "#ddb52f",
+    color: Colors.accent500,
     marginVertical: 8,
     fontWeight: "bold",
     textAlign: "center",
+    textAlignVertical: "center",
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    gap: 8,
   },
 });
